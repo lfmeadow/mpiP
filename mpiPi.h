@@ -36,6 +36,10 @@
 #include <mpi.h>
 #include "mpiPi_def.h"
 #endif
+#if defined(OPEN_MPI)
+// to deal with MPI_IN_PLACE translation
+#include <mpif-c-constants-decl.h>
+#endif
 
 #include "mpiP-hash.h"
 #include "mpiP-callsites.h"

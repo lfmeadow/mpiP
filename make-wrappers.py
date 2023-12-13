@@ -21,7 +21,6 @@ import re
 import time
 import getopt
 import socket
-import pdb
 
 cnt = 0
 fdict = {}
@@ -1246,8 +1245,8 @@ def CreateWrapper(funct, olist):
     olist.append(" );\n\n" + "return rc;\n" )
     olist.append("}" + " /* " + funct + " */\n")
 
-    #flist = FortranWrapper(funct, decl)
-    #olist.extend(flist)
+    flist = FortranWrapper(funct, decl)
+    olist.extend(flist)
     print("   Wrapped " + funct)
 
 
@@ -1325,6 +1324,13 @@ def FortranWrapper(funct, decl):
             stringVarNames.append(i);
             decl += "  char *c_" + i + " = NULL;\n";
             currBasetype = fdict[funct].paramDict[i].basetype
+        elif funct in collectiveList and i == "sendbuf":
+            # hack to handle sendbuf MPI_IN_PLACE
+            xlateTypes.append(fdict[funct].paramDict[i].basetype)
+            xlateVarNames.append(i)
+            currBasetype = fdict[funct].paramDict[i].basetype
+            decl += xlateTypes[xlateCount] + " *c_" + xlateVarNames[xlateCount] + ";\n";
+            xlateCount += 1
         else:
             #  Not translating this variable
             currBasetype = fdict[funct].paramDict[i].basetype
@@ -1417,8 +1423,12 @@ def FortranWrapper(funct, decl):
         xlateVarName = xlateVarNames[i]
         xlateType = xlateTypes[i]
 
+        if funct in collectiveList and xlateVarName == "sendbuf":
+          olist.append("c_" + xlateVarName + " = " + "OMPI_IS_FORTRAN_IN_PLACE(" +
+            xlateVarName + ") ? MPI_IN_PLACE : " + xlateVarName + ";\n")
+          xlateDone = 1
+        elif ( (funct, xlateVarName) in opaqueInArgDict \
         #  Check for valid function:argument-name entry for pre-call translation.
-        if ( (funct, xlateVarName) in opaqueInArgDict \
             and opaqueInArgDict[(funct, xlateVarName)] == xlateType ) :
 
             #  Datatype translation is the only call where the translation function
@@ -1453,21 +1463,13 @@ def FortranWrapper(funct, decl):
                 argname = "c_" + i;
             else:
                 argname = "&c_" + i;
-        elif ( i in stringVarNames ) :
-            argname = "c_" + i;
+        elif i in xlateVarNames:
+            # this must be sendbuf hack
+            argname = "c_" + i
         else:
             argname = i
 
-        if (fdict[funct].paramDict[i].pointerLevel == 0) \
-           and (fdict[funct].paramDict[i].arrayLevel == 0) \
-           and (fdict[funct].paramDict[i].basetype != "void"):
-            olist.append(argname)
-        elif (fdict[funct].paramDict[i].pointerLevel > 0):
-            olist.append(argname)
-        elif (fdict[funct].paramDict[i].arrayLevel > 0):
-            olist.append(argname)
-        else:
-            pass
+        olist.append(argname)
 
         if fdict[funct].paramConciseList.index(i) < len(fdict[funct].paramConciseList) - 1:
             olist.append(", ")
