@@ -31,8 +31,8 @@ static char *svnid =
 #ifndef CEXTRACT
 #include "elf.h"
 #include "libelf.h"
-#include "dwarf.h"
-#include "libdwarf.h"
+#include <dwarf.h>
+#include <libdwarf/libdwarf.h>
 #endif
 
 static Dwarf_Error dw_err;

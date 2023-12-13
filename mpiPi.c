@@ -159,9 +159,11 @@ mpiPi_init (char *appName, mpiPi_thr_mode_t thr_mode)
   /* -- welcome msg only collector  */
   if (mpiPi.collectorRank == mpiPi.rank)
     {
+#if 0
       mpiPi_msg ("%s V%d.%d.%d (Build %s/%s)\n", mpiPi.toolname, mpiPi_vmajor,
                  mpiPi_vminor, mpiPi_vpatch, mpiPi_vdate, mpiPi_vtime);
       mpiPi_msg ("\n");
+#endif
     }
 
   mpiPi_msg_debug ("appName is %s\n", appName);
@@ -614,9 +616,11 @@ mpiPi_publishResults (int report_style)
         }
       else
         {
+#if 0
           mpiPi_msg ("\n");
           mpiPi_msg ("Storing mpiP output in [%s].\n", mpiPi.oFilename);
           mpiPi_msg ("\n");
+#endif
         }
     }
   mpiPi_profile_print (fp, report_style);

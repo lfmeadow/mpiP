@@ -68,8 +68,11 @@ mpiPi_getenv ()
       char *av[64];
       char *sep = " \t,";
 
+#if 0
+// Messes up benchmark comparison
       if (mpiPi.rank == 0)
         mpiPi_msg ("Found MPIP environment variable [%s]\n", ep);
+#endif
       av[0] = "JUNK";
       for (cp = strtok (ep, sep), ac = 1; (ac < 64) && (NULL != cp); ac++)
         {
@@ -279,8 +282,10 @@ mpiPi_getenv ()
             }
         }
     }
+#if 0
   if (mpiPi.rank == 0)
     mpiPi_msg ("\n");
+#endif
   optind = 1;			/* reset to avoid conflicts if getopt called again */
 }
 

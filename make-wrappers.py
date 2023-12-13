@@ -1246,12 +1246,20 @@ def CreateWrapper(funct, olist):
     olist.append(" );\n\n" + "return rc;\n" )
     olist.append("}" + " /* " + funct + " */\n")
 
+    #flist = FortranWrapper(funct, decl)
+    #olist.extend(flist)
+    print("   Wrapped " + funct)
 
+
+def FortranWrapper(funct, decl):
+    global fdict
+    global arch
     #####
     ##### Fortran wrapper
     #####
 
     ##### funct decl
+    olist = []
     olist.append("\n\nextern void " + "F77_" + funct.upper() + "(" )
 
     #================================================================================
@@ -1523,9 +1531,7 @@ def CreateWrapper(funct, olist):
 
     #if ( opaqueFound == 1 and xlateDone == 0 ):
     #    print "Function " + funct + " not translated!\n"
-
-    print("   Wrapped " + funct)
-
+    return olist
 
 def GenerateWrappers():
     global flist
