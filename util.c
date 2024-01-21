@@ -89,9 +89,9 @@ mpiPi_getenv ()
             {
             case 'f':
               mpiPi.outputDir = optarg;
-              if (mpiPi.rank == 0)
-                mpiPi_msg ("Set the output directory to [%s].\n",
-                           mpiPi.outputDir);
+              //if (mpiPi.rank == 0)
+              //  mpiPi_msg ("Set the output directory to [%s].\n",
+              //             mpiPi.outputDir);
               break;
 
             case 'g':
@@ -160,10 +160,10 @@ mpiPi_getenv ()
                 if (mpiPi.reportStackDepth == 0)
                   mpiPi.calcCOV = 0;
 
-                if (mpiPi.rank == 0)
-                  mpiPi_msg
-                      ("Set the callsite stack traceback depth to [%d].\n",
-                       mpiPi.reportStackDepth);
+                //if (mpiPi.rank == 0)
+                //  mpiPi_msg
+                //      ("Set the callsite stack traceback depth to [%d].\n",
+                //       mpiPi.reportStackDepth);
               }
               mpiPi.fullStackDepth = mpiPi.reportStackDepth + mpiPi.internalStackDepth;
 
